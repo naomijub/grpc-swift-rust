@@ -25,7 +25,6 @@ class GetViewController: UIViewController {
         } else if which == Options.Get {
             buttton?.setTitle("Get", for: .normal)
         }
-        // Do any additional setup after loading the view.
     }
     
     @IBAction func action() {
@@ -33,14 +32,22 @@ class GetViewController: UIViewController {
         let rep = DataRepository.init()
         
         if which == Options.Get && id != nil{
+            noteInfo?.isHidden = false
             let note = rep.get(id: id!)
-            let str = " ID: \(note.id) \n Title: \(note.title) \n Content: \(note.content)"
-            noteInfo?.isHidden = false
-            noteInfo?.text = str
+            if note.note != nil {
+                let str = " ID: \(note.note!.id) \n Title: \(note.note!.title) \n Content: \(note.note!.content)"
+                
+                noteInfo?.text = str
+            } else {
+                noteInfo?.text = "Failed"
+            }
         } else if which == Options.Delete && id != nil {
-            let _ = rep.get(id: id!)
-            noteInfo?.isHidden = false
-            noteInfo?.text = "Done"
+            let note = rep.get(id: id!)
+            if note.note != nil {
+                noteInfo?.text = "Done"
+            } else {
+                noteInfo?.text = "Done"
+            }
         } else {
             return
         }

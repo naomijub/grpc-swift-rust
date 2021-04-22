@@ -1,17 +1,17 @@
-use tonic::{transport::Server, Request, Response, Status};
-use tokio::sync::Mutex;
 use std::collections::HashMap;
+use tokio::sync::Mutex;
+use tonic::{transport::Server, Request, Response, Status};
 
 mod notes;
 
 use notes::{
     note_service_server::{NoteService, NoteServiceServer},
-    Note, NoteList, NoteRequestId
+    Note, NoteList, NoteRequestId,
 };
 
 // #[derive(Default)]
 pub struct NoteContext {
-    context: Mutex<HashMap<String, Note>>
+    context: Mutex<HashMap<String, Note>>,
 }
 
 impl Default for NoteContext {
@@ -31,27 +31,25 @@ impl Default for NoteContext {
         hm.insert(note2.id.clone(), note2);
 
         Self {
-            context: Mutex::new(hm)
+            context: Mutex::new(hm),
         }
     }
 }
 
 #[tonic::async_trait]
 impl NoteService for NoteContext {
-    async fn list(&self,_request:Request<notes::Empty>,) -> Result<Response<NoteList>,Status> {
+    async fn list(&self, _request: Request<notes::Empty>) -> Result<Response<NoteList>, Status> {
         let data = self.context.lock().await;
         let note_list = data.iter().map(|n| n.1.to_owned()).collect::<Vec<Note>>();
 
         if note_list.is_empty() {
             Err(Status::not_found("Empty list"))
         } else {
-            Ok(Response::new(NoteList {
-                notes: note_list
-            }))
+            Ok(Response::new(NoteList { notes: note_list }))
         }
     }
 
-    async fn get(&self,request:Request<NoteRequestId>,)->Result<Response<Note>,Status> {
+    async fn get(&self, request: Request<NoteRequestId>) -> Result<Response<Note>, Status> {
         let note_id = request.into_inner();
         let data = self.context.lock().await;
 
@@ -64,11 +62,10 @@ impl NoteService for NoteContext {
         }
     }
 
-    async fn insert(&self,request:Request<Note>,)->Result<Response<Note>,Status> {
+    async fn insert(&self, request: Request<Note>) -> Result<Response<Note>, Status> {
         let note = request.into_inner();
         let mut data = self.context.lock().await;
 
-        
         if !data.contains_key(&note.id) {
             data.insert(note.id.clone(), note.clone());
             Ok(Response::new(note))
@@ -77,11 +74,10 @@ impl NoteService for NoteContext {
         }
     }
 
-    async fn update(&self,request:Request<Note>,)->Result<Response<Note>,Status> {
+    async fn update(&self, request: Request<Note>) -> Result<Response<Note>, Status> {
         let note = request.into_inner();
         let mut data = self.context.lock().await;
 
-        
         if data.contains_key(&note.id) {
             let previous = data.insert(note.id.clone(), note.clone());
             Ok(Response::new(previous.unwrap()))
@@ -90,11 +86,13 @@ impl NoteService for NoteContext {
         }
     }
 
-    async fn delete(&self,request:Request<NoteRequestId>,)->Result<Response<notes::Empty>,Status> {
+    async fn delete(
+        &self,
+        request: Request<NoteRequestId>,
+    ) -> Result<Response<notes::Empty>, Status> {
         let note_id = request.into_inner();
         let mut data = self.context.lock().await;
 
-        
         if data.contains_key(&note_id.id) {
             data.remove(&note_id.id);
             Ok(Response::new(notes::Empty::default()))
@@ -103,7 +101,6 @@ impl NoteService for NoteContext {
         }
     }
 }
-
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {

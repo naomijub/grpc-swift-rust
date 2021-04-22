@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		D361E59226321640007A4C07 /* Result.swift in Sources */ = {isa = PBXBuildFile; fileRef = D361E59126321640007A4C07 /* Result.swift */; };
 		D39480472631DB4300AC8627 /* notes.grpc.swift in Sources */ = {isa = PBXBuildFile; fileRef = D39480462631DB4300AC8627 /* notes.grpc.swift */; };
 		D39E0AC32631B47B0084E261 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D39E0AC22631B47B0084E261 /* AppDelegate.swift */; };
 		D39E0AC52631B47B0084E261 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D39E0AC42631B47B0084E261 /* SceneDelegate.swift */; };
@@ -26,6 +27,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		D361E59126321640007A4C07 /* Result.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Result.swift; sourceTree = "<group>"; };
 		D39480462631DB4300AC8627 /* notes.grpc.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = notes.grpc.swift; path = Client/notes.grpc.swift; sourceTree = SOURCE_ROOT; };
 		D39E0ABF2631B47B0084E261 /* Client.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Client.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D39E0AC22631B47B0084E261 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -115,6 +117,7 @@
 			isa = PBXGroup;
 			children = (
 				D39E0AEE2631D29C0084E261 /* GetOrDelete.swift */,
+				D361E59126321640007A4C07 /* Result.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -210,6 +213,7 @@
 				D39480472631DB4300AC8627 /* notes.grpc.swift in Sources */,
 				D39E0AE42631C0C90084E261 /* GetViewController.swift in Sources */,
 				D39E0AEF2631D29C0084E261 /* GetOrDelete.swift in Sources */,
+				D361E59226321640007A4C07 /* Result.swift in Sources */,
 				D39E0AC32631B47B0084E261 /* AppDelegate.swift in Sources */,
 				D39E0AC52631B47B0084E261 /* SceneDelegate.swift in Sources */,
 				D39E0AE72631C0F00084E261 /* ListViewController.swift in Sources */,

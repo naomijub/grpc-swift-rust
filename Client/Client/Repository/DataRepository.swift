@@ -37,18 +37,19 @@ class DataRepository {
         return notes
     }
     
-    func get(id: String) -> Notes_Note {
-        var note = Notes_Note.init();
+    func get(id: String) -> ResultNote {
+        var note = ResultNote.init()
         var note_id = Notes_NoteRequestId.init();
         note_id.id = id
         
         let call = client.get(note_id, callOptions: options)
         
         call.response.whenSuccess { summary in
-          note = summary
+            note.note = summary
         }
 
         call.response.whenFailure { error in
+            note.error = error
           print("Notes_ListRoute Failed: \(error)")
         }
 
@@ -62,7 +63,41 @@ class DataRepository {
         return note
     }
     
-    func delete(id: String) {
+    func addOrUpdate(note: Notes_Note, which: Options) -> ResultNote {
+        var result = ResultNote.init();
+        var call: UnaryCall<Notes_Note, Notes_Note>
+        
+        if which == Options.Add {
+            call = client.insert(note, callOptions: options)
+        } else if which == Options.Update {
+            call = client.update(note, callOptions: options)
+        } else {
+            result.error = EventLoopError.cancelled
+            return result
+        }
+        
+        
+        call.response.whenSuccess { summary in
+            result.note = summary
+        }
+
+        call.response.whenFailure { error in
+            result.error = error
+          print("Notes_ListRoute Failed: \(error)")
+        }
+
+        call.status.whenComplete { notes in
+          print("Finished Notes_AddOrUpdateRoute")
+        }
+      
+        // Wait for the call to end.
+        _ = try! call.status.wait()
+        
+        return result
+    }
+    
+    func delete(id: String) -> ResultNote {
+        var result = ResultNote.init()
         var note_id = Notes_NoteRequestId.init();
         note_id.id = id
         
@@ -70,6 +105,7 @@ class DataRepository {
 
 
         call.response.whenFailure { error in
+            result.error = error
           print("Notes_ListRoute Failed: \(error)")
         }
 
@@ -79,6 +115,8 @@ class DataRepository {
       
         // Wait for the call to end.
         _ = try! call.status.wait()
+        
+        return result
     }
     
 }
