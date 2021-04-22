@@ -9,14 +9,36 @@ use notes::{
     Note, NoteList, NoteRequestId
 };
 
-#[derive(Default)]
+// #[derive(Default)]
 pub struct NoteContext {
     context: Mutex<HashMap<String, Note>>
 }
 
+impl Default for NoteContext {
+    fn default() -> Self {
+        let mut hm = HashMap::new();
+        let note = Note {
+            id: "id1".to_string(),
+            title: "title1".to_string(),
+            content: "content1".to_string(),
+        };
+        let note2 = Note {
+            id: "id2".to_string(),
+            title: "title2".to_string(),
+            content: "content2".to_string(),
+        };
+        hm.insert(note.id.clone(), note);
+        hm.insert(note2.id.clone(), note2);
+
+        Self {
+            context: Mutex::new(hm)
+        }
+    }
+}
+
 #[tonic::async_trait]
 impl NoteService for NoteContext {
-    async fn list(&self,_request:Request<notes::Empty>,)->Result<Response<NoteList>,Status> {
+    async fn list(&self,_request:Request<notes::Empty>,) -> Result<Response<NoteList>,Status> {
         let data = self.context.lock().await;
         let note_list = data.iter().map(|n| n.1.to_owned()).collect::<Vec<Note>>();
 
