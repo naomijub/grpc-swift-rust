@@ -9,14 +9,14 @@ class ViewController: UIViewController, CrudUI {
     }
     
     @IBAction func get() {
-        let getViewController = UIStoryboard(name: "Main", bundle: .main).instantiateViewController(identifier: "AddViewControllerID", creator: { coder -> GetViewController? in
+        let getViewController = UIStoryboard(name: "Main", bundle: .main).instantiateViewController(identifier: "GetViewControllerID", creator: { coder -> GetViewController? in
             GetViewController(coder: coder, Options.Get)
         })
         present(getViewController, animated: true, completion: nil)
     }
     
     @IBAction func delete() {
-        let getViewController = UIStoryboard(name: "Main", bundle: .main).instantiateViewController(identifier: "AddViewControllerID", creator: { coder -> GetViewController? in
+        let getViewController = UIStoryboard(name: "Main", bundle: .main).instantiateViewController(identifier: "GetViewControllerID", creator: { coder -> GetViewController? in
             GetViewController(coder: coder, Options.Delete)
         })
         present(getViewController, animated: true, completion: nil)
