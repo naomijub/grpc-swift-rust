@@ -31,12 +31,20 @@ class ViewController: UIViewController, CrudUI {
     
     @IBAction func list() {
         let rep = DataRepository.init()
-        let notes = rep.list()
+        let result = rep.list()
         
-        let listViewController = UIStoryboard(name: "Main", bundle: .main).instantiateViewController(identifier: "ListViewControllerID", creator: { coder -> ListViewController? in
-            ListViewController(coder: coder, notes)
-        })
-        present(listViewController, animated: true, completion: nil)
+        if case .success(let notes) = result {
+            let listViewController = UIStoryboard(name: "Main", bundle: .main).instantiateViewController(identifier: "ListViewControllerID", creator: { coder -> ListViewController? in
+                ListViewController(coder: coder, notes)
+            })
+            present(listViewController, animated: true, completion: nil)
+        } else {
+            if let nav = self.navigationController {
+                let errorView = ErrorView()
+                nav.pushViewController(errorView, animated: true)
+            }
+        }
+        
     }
     
 

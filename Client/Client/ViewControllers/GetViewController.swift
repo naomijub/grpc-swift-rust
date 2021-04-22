@@ -33,20 +33,22 @@ class GetViewController: UIViewController {
         
         if which == Options.Get && id != nil{
             noteInfo?.isHidden = false
-            let note = rep.get(id: id!)
-            if note.note != nil {
-                let str = " ID: \(note.note!.id) \n Title: \(note.note!.title) \n Content: \(note.note!.content)"
-                
-                noteInfo?.text = str
-            } else {
-                noteInfo?.text = "Failed"
+            let result = rep.get(id: id!)
+            switch result {
+                case .success(let note):
+                    let str = " ID: \(note.id) \n Title: \(note.title) \n Content: \(note.content)"
+                    noteInfo?.text = str
+                case .failure(_):
+                    noteInfo?.text = "Failed"
             }
         } else if which == Options.Delete && id != nil {
-            let note = rep.get(id: id!)
-            if note.note != nil {
-                noteInfo?.text = "Done"
-            } else {
-                noteInfo?.text = "Done"
+            let result = rep.get(id: id!)
+            
+            switch result {
+                case .success(_):
+                    noteInfo?.text = "Succeeded"
+                case .failure(_):
+                    noteInfo?.text = "Failed"
             }
         } else {
             return

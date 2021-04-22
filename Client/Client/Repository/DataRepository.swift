@@ -15,16 +15,18 @@ class DataRepository {
         client = Notes_NoteServiceClient(channel: channel)
     }
         
-    func list() -> Array<Notes_Note> {
-        var notes: Array<Notes_Note> = []
+    func list() -> Result<Array<Notes_Note>, Error> {
+        var notes: Array<Notes_Note>?
+        var error: Error?;
         let call = client.list(Notes_Empty(), callOptions: options)
 
       call.response.whenSuccess { summary in
         notes = summary.notes
       }
 
-      call.response.whenFailure { error in
-        print("Notes_ListRoute Failed: \(error)")
+      call.response.whenFailure { e in
+        error = e
+        print("Notes_ListRoute Failed: \(e)")
       }
 
       call.status.whenComplete { notes in
@@ -34,23 +36,27 @@ class DataRepository {
       // Wait for the call to end.
       _ = try! call.status.wait()
         
-        return notes
+        if error != nil {
+            return .failure(error!)
+        }
+        return .success(notes!)
     }
     
-    func get(id: String) -> ResultNote {
-        var note = ResultNote.init()
+    func get(id: String) -> Result<Notes_Note, Error> {
+        var note: Notes_Note?;
+        var error: Error?;
         var note_id = Notes_NoteRequestId.init();
         note_id.id = id
         
         let call = client.get(note_id, callOptions: options)
         
         call.response.whenSuccess { summary in
-            note.note = summary
+            note = summary
         }
 
-        call.response.whenFailure { error in
-            note.error = error
-          print("Notes_ListRoute Failed: \(error)")
+        call.response.whenFailure { e in
+            error = e
+          print("Notes_ListRoute Failed: \(e)")
         }
 
         call.status.whenComplete { notes in
@@ -60,30 +66,34 @@ class DataRepository {
         // Wait for the call to end.
         _ = try! call.status.wait()
         
-        return note
+        if error != nil {
+            return .failure(error!)
+        }
+        return .success(note!)
     }
     
-    func addOrUpdate(note: Notes_Note, which: Options) -> ResultNote {
-        var result = ResultNote.init();
+    func addOrUpdate(note: Notes_Note, which: Options) -> Result<Notes_Note, Error> {
+        var result: Notes_Note?;
         var call: UnaryCall<Notes_Note, Notes_Note>
+        var error: Error?;
         
         if which == Options.Add {
             call = client.insert(note, callOptions: options)
         } else if which == Options.Update {
             call = client.update(note, callOptions: options)
         } else {
-            result.error = EventLoopError.cancelled
-            return result
+            return .failure(EventLoopError.cancelled)
+            
         }
         
         
         call.response.whenSuccess { summary in
-            result.note = summary
+            result = summary
         }
 
-        call.response.whenFailure { error in
-            result.error = error
-          print("Notes_ListRoute Failed: \(error)")
+        call.response.whenFailure { e in
+            error = e
+          print("Notes_ListRoute Failed: \(e)")
         }
 
         call.status.whenComplete { notes in
@@ -93,20 +103,24 @@ class DataRepository {
         // Wait for the call to end.
         _ = try! call.status.wait()
         
-        return result
+        if error != nil {
+            return .failure(error!)
+        }
+        return .success(result!)
     }
     
-    func delete(id: String) -> ResultNote {
-        var result = ResultNote.init()
+    func delete(id: String) -> Result<Notes_Note, Error> {
+        let result = Notes_Note.init()
+        var error: Error?;
         var note_id = Notes_NoteRequestId.init();
         note_id.id = id
         
         let call = client.delete(note_id, callOptions: options)
 
 
-        call.response.whenFailure { error in
-            result.error = error
-          print("Notes_ListRoute Failed: \(error)")
+        call.response.whenFailure { e in
+            error = e
+          print("Notes_ListRoute Failed: \(e)")
         }
 
         call.status.whenComplete { notes in
@@ -116,7 +130,10 @@ class DataRepository {
         // Wait for the call to end.
         _ = try! call.status.wait()
         
-        return result
+        if error != nil {
+            return .failure(error!)
+        }
+        return .success(result)
     }
     
 }

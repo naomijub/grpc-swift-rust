@@ -41,14 +41,14 @@ class AddViewController: UIViewController {
         note.content = self.content?.text ?? ""
         
         if (which == Options.Add || which == Options.Update) && id != nil {
-            let note = rep.addOrUpdate(note: note, which: which)
+            let result = rep.addOrUpdate(note: note, which: which)
             
-            if note.error != nil {
-                okLabel?.text = "Failed"
-            } else {
-                okLabel?.text = "Succeeded"
+            switch result {
+                case .success(_):
+                    okLabel?.text = "Succeeded"
+                case .failure(_):
+                    okLabel?.text = "Failed"
             }
-            
         } else {
             return
         }
